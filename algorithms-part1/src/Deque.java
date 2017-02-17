@@ -1,46 +1,49 @@
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
-class Node<Item> {
-    private Node prev;
-    private Node next;
-    private Item val;
-
-    Node(Item obj) {
-        this.val = obj;
-        this.prev = null;
-        this.next = null;
-    }
-
-    public Node<Item> getPrev() {
-       return prev;
-    }
-
-    public Node<Item> getNext() {
-        return next;
-    }
-
-    public Item getVal() {
-       return val;
-    }
-
-    public void setPrev(Node<Item> p) {
-        prev = p;
-    }
-
-    public void setNext(Node<Item> n) {
-        next = n;
-    }
-
-}
 
 public class Deque<Item> implements Iterable<Item> {
-    private Node head;
-    private Node tail;
+
+    private class Node<Item> {
+        private Node<Item> prev;
+        private Node<Item> next;
+        private Item val;
+
+        Node(Item obj) {
+            this.val = obj;
+            this.prev = null;
+            this.next = null;
+        }
+
+        public Node<Item> getPrev() {
+            return prev;
+        }
+
+        public Node<Item> getNext() {
+            return next;
+        }
+
+        public Item getVal() {
+            return val;
+        }
+
+        public void setPrev(Node<Item> p) {
+            prev = p;
+        }
+
+        public void setNext(Node<Item> n) {
+            next = n;
+        }
+
+    }
+
+    private Node<Item> head;
+    private Node<Item> tail;
     private int size;
 
     public Deque() {
-        this.head = new Node(null);
-        this.tail = new Node(null);
+        this.head = new Node<Item>(null);
+        this.tail = new Node<Item>(null);
 
         this.head.setNext(this.tail);
         this.tail.setPrev(this.head);
@@ -62,7 +65,7 @@ public class Deque<Item> implements Iterable<Item> {
             throw new NullPointerException("Add first item is null");
         }
 
-        insert(new Node(item), this.head.getNext());
+        insert(new Node<Item>(item), this.head.getNext());
         size++;
     }
 
@@ -71,13 +74,13 @@ public class Deque<Item> implements Iterable<Item> {
             throw new NullPointerException("Add last item is null");
         }
 
-        insert(new Node(item), this.tail);
+        insert(new Node<Item>(item), this.tail);
         size++;
     }
 
     public Item removeFirst() {
         if (isEmpty()) {
-            return null;
+            throw new NoSuchElementException("The queue is empty.");
         }
         Node removed = remove(this.head.getNext());
         size--;
@@ -87,7 +90,7 @@ public class Deque<Item> implements Iterable<Item> {
 
     public Item removeLast() {
         if (isEmpty()) {
-            return null;
+            throw new NoSuchElementException("The queue is empty.");
         }
         Node removed = remove(this.tail.getPrev());
         size--;
@@ -126,6 +129,39 @@ public class Deque<Item> implements Iterable<Item> {
         return node;
     }
 
+    private class DequeIterator implements Iterator<Item> {
+        private Node<Item> iter;
+
+        public DequeIterator() {
+            iter = head.getNext();
+        }
+
+        @Override
+        public boolean hasNext() {
+            return iter.getVal() != null;
+        }
+
+        @Override
+        public Item next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException("Iterate to the end.");
+            }
+            Item val = iter.getVal();
+            iter = iter.getNext();
+            return val;
+        }
+
+    }
+
+    /**
+     * Return an iterator over items in order from front to end.
+     * @return an iterator over items.
+     */
+    @Override
+    public Iterator<Item> iterator() {
+        return new DequeIterator();
+    }
+
     public static void main(String[] args) {
         Deque<String> deque = new Deque<>();
         System.out.println("is empty? " + deque.isEmpty());
@@ -152,33 +188,4 @@ public class Deque<Item> implements Iterable<Item> {
         }
     }
 
-    class DequeIterator implements Iterator<Item> {
-        private Node<Item> iter;
-
-        public DequeIterator() {
-            iter = head.getNext();
-        }
-
-        @Override
-        public boolean hasNext() {
-            return iter.getVal() != null;
-        }
-
-        @Override
-        public Item next() {
-            Item val = iter.getVal();
-            iter = iter.getNext();
-            return val;
-        }
-
-    }
-
-    /**
-     * Return an iterator over items in order from front to end.
-     * @return an iterator over items.
-     */
-    @Override
-    public Iterator<Item> iterator() {
-        return new DequeIterator();
-    }
 }
