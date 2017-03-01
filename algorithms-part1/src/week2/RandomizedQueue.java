@@ -1,3 +1,5 @@
+package week2;
+
 import edu.princeton.cs.algs4.StdRandom;
 
 import java.util.Iterator;
@@ -113,7 +115,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         System.out.println(it2.next());
 
         while (!rq.isEmpty()) {
-            System.out.println("Deque: " + rq.dequeue() + " size: " + rq.size());
+            System.out.println("week2.Deque: " + rq.dequeue() + " size: " + rq.size());
         }
     }
 
